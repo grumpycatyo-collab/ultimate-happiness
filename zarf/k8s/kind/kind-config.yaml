@@ -1,0 +1,2 @@
+kind: Cluster
+apiVersion: kind.x-8s.io/v1alpha4
