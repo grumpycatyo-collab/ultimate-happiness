@@ -30,6 +30,7 @@ SHELL := /bin/bash
 run:
 	go run app/services/sales-api/main.go | go run app/tooling/logfmt/main.go
 
+
 admin:
 	go run app/tooling/admin/main.go
 
