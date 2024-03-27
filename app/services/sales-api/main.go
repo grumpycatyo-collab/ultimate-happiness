@@ -4,9 +4,11 @@ import (
 	"errors"
 	"fmt"
 	"github.com/ardanlabs/conf"
+	"github.com/grumpycatyo-collab/ultimate-happiness/app/services/sales-api/handlers"
 	maxprocs "go.uber.org/automaxprocs/maxprocs"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"net/http"
 	"os"
 	"os/signal"
 	"runtime"
@@ -76,6 +78,18 @@ func run(log *zap.SugaredLogger) error {
 	}
 	log.Infow("startup", "config", out)
 
+	// Start Debug Service
+	log.Infow("startup", "status", "debug router started", "host", cfg.Web.DebugHost)
+
+	debugMux := handlers.DebugStandardLibraryMux()
+
+	go func() {
+		if err := http.ListenAndServe(cfg.Web.DebugHost, debugMux); err != nil {
+			log.Errorw("shutdown", "status", "debug router closed", "host", cfg.Web.DebugHost, "ERROR", err)
+		}
+	}()
+
+	// =================================================================================================================
 	shutdown := make(chan os.Signal, 1)
 	signal.Notify(shutdown, syscall.SIGINT, syscall.SIGTERM)
 	<-shutdown
