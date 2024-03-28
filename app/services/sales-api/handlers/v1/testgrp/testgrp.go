@@ -2,7 +2,7 @@ package testgrp
 
 import (
 	"context"
-	"encoding/json"
+	"github.com/grumpycatyo-collab/ultimate-happiness/foundation/web"
 	"go.uber.org/zap"
 	"net/http"
 )
@@ -25,5 +25,5 @@ func (h Handlers) Test(ctx context.Context, w http.ResponseWriter, r *http.Reque
 		"path", r.URL.Path,
 		"remoteaddr", r.RemoteAddr)
 
-	return json.NewEncoder(w).Encode(status)
+	return web.Respond(ctx, w, status, http.StatusOK)
 }
