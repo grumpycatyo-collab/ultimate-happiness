@@ -10,7 +10,7 @@ type Handlers struct {
 	Log *zap.SugaredLogger
 }
 
-// Test handler is for development
+// Test handler for dev
 func (h Handlers) Test(w http.ResponseWriter, r *http.Request) {
 	status := struct {
 		Status string
