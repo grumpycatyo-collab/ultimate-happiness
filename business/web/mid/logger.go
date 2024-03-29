@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-// using Closures
+// using closures
 func Logger(log *zap.SugaredLogger) web.Middleware {
 	m := func(handler web.Handler) web.Handler {
 
