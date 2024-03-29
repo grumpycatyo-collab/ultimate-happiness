@@ -4,6 +4,7 @@ import (
 	"expvar"
 	"github.com/grumpycatyo-collab/ultimate-happiness/app/services/sales-api/handlers/debug/checkgrp"
 	"github.com/grumpycatyo-collab/ultimate-happiness/app/services/sales-api/handlers/v1/testgrp"
+	"github.com/grumpycatyo-collab/ultimate-happiness/business/web/mid"
 	"github.com/grumpycatyo-collab/ultimate-happiness/foundation/web"
 	"go.uber.org/zap"
 	"net/http"
@@ -45,6 +46,7 @@ type APIMuxConfig struct {
 func APIMux(cfg APIMuxConfig) *web.App {
 	app := web.NewApp(
 		cfg.Shutdown,
+		mid.Logger(cfg.Log),
 	)
 
 	v1(app, cfg)

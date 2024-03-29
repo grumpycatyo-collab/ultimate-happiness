@@ -3,9 +3,11 @@ package web
 import (
 	"context"
 	"github.com/dimfeld/httptreemux/v5"
+	"github.com/google/uuid"
 	"net/http"
 	"os"
 	"syscall"
+	"time"
 )
 
 type Handler func(ctx context.Context, w http.ResponseWriter, r *http.Request) error
@@ -35,11 +37,17 @@ func (a *App) Handle(method string, group string, path string, handler Handler, 
 	handler = wrapMiddleware(a.mw, handler)
 
 	h := func(w http.ResponseWriter, r *http.Request) {
-
-		if err := handler(r.Context(), w, r); err != nil {
-			// TODO: ERROR HANDLING
+		ctx := r.Context()
+		v := Values{
+			TraceID: uuid.New().String(),
+			Now:     time.Now(),
+		}
+		ctx = context.WithValue(ctx, key, &v)
+		if err := handler(ctx, w, r); err != nil {
+			a.SignalShutdown()
 			return
 		}
+
 	}
 
 	finalPath := path
