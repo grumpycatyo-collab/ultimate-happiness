@@ -15,8 +15,8 @@ type Handlers struct {
 // Test handler for dev
 func (h Handlers) Test(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 	if n := rand.Intn(100); n%2 == 0 {
-		//return web.NewShutdownError("restart service")
-		panic("testing panic")
+		return web.NewShutdownError("restart service")
+		//panic("testing panic")
 	}
 	status := struct {
 		Status string
