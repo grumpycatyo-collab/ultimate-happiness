@@ -85,6 +85,7 @@ func genToken() error {
 	// =================================================================================================================
 
 	parser := jwt.Parser{
+		// TODO: to change ValidMethods (it's deprecated)
 		ValidMethods: []string{"RS256"},
 	}
 
