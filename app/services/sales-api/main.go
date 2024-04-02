@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"github.com/ardanlabs/conf"
 	"github.com/grumpycatyo-collab/ultimate-happiness/app/services/sales-api/handlers"
+	"github.com/grumpycatyo-collab/ultimate-happiness/business/sys/auth"
+	"github.com/grumpycatyo-collab/ultimate-happiness/foundation/keystore"
 	maxprocs "go.uber.org/automaxprocs/maxprocs"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -52,6 +54,10 @@ func run(log *zap.SugaredLogger) error {
 			IdleTimeout     time.Duration `conf:"default:120s,mask"`
 			ShutdownTimeout time.Duration `conf:"default:20s,noprint"`
 		}
+		Auth struct {
+			KeysFolder string `conf:"default:zarf/keys/"`
+			ActiveKID  string `conf:"default:54bb2165-71e1-41a6-af3e-7da4a0e1e2c1"`
+		}
 	}{
 		Version: conf.Version{
 			SVN:  build,
@@ -68,7 +74,7 @@ func run(log *zap.SugaredLogger) error {
 		}
 		return fmt.Errorf("parsing config: %w", err)
 	}
-
+	// =================================================================================================================
 	// App starting
 	log.Infow("starting service", "version", build)
 	defer log.Infow("shutdown complete")
@@ -78,6 +84,20 @@ func run(log *zap.SugaredLogger) error {
 		return fmt.Errorf("generating config for output: %w", err)
 	}
 	log.Infow("startup", "config", out)
+
+	// =========
+	// Init auth support
+	log.Infow("startup", "status", "initializing authentication support")
+
+	ks, err := keystore.NewFS(os.DirFS(cfg.Auth.KeysFolder))
+	if err != nil {
+		return fmt.Errorf("reading keys: %w", err)
+	}
+
+	auth, err := auth.New(cfg.Auth.ActiveKID, ks)
+	if err != nil {
+		return fmt.Errorf("constructing auth: %w", err)
+	}
 
 	// Start Debug Service
 	log.Infow("startup", "status", "debug router started", "host", cfg.Web.DebugHost)
@@ -101,6 +121,7 @@ func run(log *zap.SugaredLogger) error {
 	apiMux := handlers.APIMux(handlers.APIMuxConfig{
 		Shutdown: shutdown,
 		Log:      log,
+		Auth:     auth,
 	})
 
 	api := http.Server{
