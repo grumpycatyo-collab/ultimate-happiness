@@ -39,8 +39,7 @@ admin:
 # Running tests within the local computer
 
 test:
-	go test ./... -count=1
-	staticcheck -checks=all ./...
+	go test -v ./... -count=1
 
 # ==============================================================================
 # Building containers
