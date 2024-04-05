@@ -43,7 +43,7 @@ func run(log *zap.SugaredLogger) error {
 	}
 	log.Infow("startup", "GOMAXPROCS", runtime.GOMAXPROCS(0))
 
-	//Configuration
+	//Configuration structures
 	cfg := struct {
 		conf.Version
 		Web struct {
