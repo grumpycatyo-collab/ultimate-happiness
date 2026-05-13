@@ -109,9 +109,3 @@ GET /debug/readiness
 GET /debug/vars
 GET /debug/pprof/
 ```
-
-## Interview note
-
-This repository is useful for discussing Go service structure, configuration, middleware design, authentication, debug surfaces, and graceful shutdown. It is not intended to represent a complete business product.
-
-A larger thesis-based Go project exists separately and contains a fuller decision-support system with Kafka ingestion, model-serving integration, REST/HTMX UI, observability, and explanation logic. That project is private because it is thesis-related.
